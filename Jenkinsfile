@@ -18,12 +18,12 @@ pipeline {
         allureReportUrl = "${JENKINS_URL}/${JOB_PATH}/${buildNumber}/${REPORT_PATH}"
         FROM_EMAIL="bityk@163.com"
         REPORT_EMAIL="528198540@qq.com"
-        // 将GA_TOKEN(GA = Github Access)替换为在 Jenkins 中存储的 GitHub 访问令牌的凭据 ID
-        GA_TOKEN = credentials('GithubAccessLongTerm')
-        GA_REPO_OWNER = 'kraigyang'
-        GA_REPO_NAME = "${currentRepoName}"
-        // 动态获取当前构建的提交 SHA
-        GA_COMMIT_SHA = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
+        // // 将GA_TOKEN(GA = Github Access)替换为在 Jenkins 中存储的 GitHub 访问令牌的凭据 ID
+        // GA_TOKEN = credentials('GithubAccessLongTerm')
+        // GA_REPO_OWNER = 'kraigyang'
+        // GA_REPO_NAME = "${currentRepoName}"
+        // // 动态获取当前构建的提交 SHA
+        // GA_COMMIT_SHA = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
     }
     
     stages {
@@ -109,11 +109,11 @@ def updateGithubCommitStatus(String state, String description) {
     def context = 'continuous-integration/jenkins'
     def target_url = "${env.JOB_URL}/${env.BUILD_NUMBER}"
 
-    sh """
-    curl -s -X POST -H "Authorization: token ${GA_TOKEN}" \
-    -d '{\"state\": \"${state}\", \"target_url\": \"${target_url}\", \"description\": \"${description}\", \"context\": \"${context}\"}' \
-    https://api.github.com/repos/${GA_REPO_OWNER}/${GA_REPO_NAME}/statuses/${GA_COMMIT_SHA}
-    """
+    // sh """
+    // curl -s -X POST -H "Authorization: token ${GA_TOKEN}" \
+    // -d '{\"state\": \"${state}\", \"target_url\": \"${target_url}\", \"description\": \"${description}\", \"context\": \"${context}\"}' \
+    // https://api.github.com/repos/${GA_REPO_OWNER}/${GA_REPO_NAME}/statuses/${GA_COMMIT_SHA}
+    // """
 }
 
 def repos() {
