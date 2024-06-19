@@ -51,7 +51,7 @@ pipeline {
 }
 
 def repos() {
-  return ["$currentRepoName", "$mainRepoName"]
+  return ["$mainRepoName"]
 }
 
 def repoJobs() {
