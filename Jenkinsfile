@@ -49,28 +49,28 @@ pipeline {
         } 
     }
 
-    post {
-        failure{
-            script{
-                updateGithubCommitStatus('failure', "Build failed")
-            }
-        }
-        success{
-            script{
-                updateGithubCommitStatus('success', "Build succeeded")
-            }
-        }
-	unstable{
-            script{
-                updateGithubCommitStatus('failure', "Build succeeded")
-            }
-        }
-	always{
-            script{
-		sendResultMail()
-            }
-        }
-    }
+ //    post {
+ //        failure{
+ //            script{
+ //                updateGithubCommitStatus('failure', "Build failed")
+ //            }
+ //        }
+ //        success{
+ //            script{
+ //                updateGithubCommitStatus('success', "Build succeeded")
+ //            }
+ //        }
+	// unstable{
+ //            script{
+ //                updateGithubCommitStatus('failure', "Build succeeded")
+ //            }
+ //        }
+	// always{
+ //            script{
+	// 	sendResultMail()
+ //            }
+ //        }
+ //    }
 }
 
 def sendResultMail(){
