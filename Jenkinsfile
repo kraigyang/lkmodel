@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        // 主仓名
+        //
         mainRepoName = "lkmodel"
-        // 提交仓名
+        //
         currentRepoName = "${GIT_URL.substring(GIT_URL.lastIndexOf('/')+1, GIT_URL.length()-4)}"
         NODE_BASE_NAME = "ui-node-${GIT_COMMIT.substring(0, 6)}"
         JENKINS_URL = "http://49.51.192.19:9095"
@@ -12,22 +12,22 @@ pipeline {
         REPORT_PATH = "allure"
         GITHUB_URL_PREFIX = "https://github.com/kraigyang/"
         GITHUB_URL_SUFFIX = ".git"
-        //根据内置变量currentBuild获取构建号
+        //
         buildNumber = "${currentBuild.number}"
-        // 构建 Allure 报告地址
+        //
         allureReportUrl = "${JENKINS_URL}/${JOB_PATH}/${buildNumber}/${REPORT_PATH}"
         FROM_EMAIL="bityk@163.com"
         REPORT_EMAIL="528198540@qq.com"
-        // // 将GA_TOKEN(GA = Github Access)替换为在 Jenkins 中存储的 GitHub 访问令牌的凭据 ID
+        //
         // GA_TOKEN = credentials('GithubAccessLongTerm')
         // GA_REPO_OWNER = 'kraigyang'
         // GA_REPO_NAME = "${currentRepoName}"
-        // // 动态获取当前构建的提交 SHA
+        //
         // GA_COMMIT_SHA = sh(script: 'git rev-parse HEAD', returnStdout: true).trim()
     }
     
     stages {
-        stage("多仓CI") {
+        stage("multirepos-ci") {
             steps {
                 script {
 		        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
@@ -37,7 +37,7 @@ pipeline {
                 }
             }
         }
-        stage("合并展示"){
+        stage("reports-merge"){
             steps {
                 script {
                     echo "-------------------------allure report generating start---------------------------------------------------"
@@ -58,16 +58,16 @@ def repoJobs() {
   jobs = [:]
   repos().each { repo ->
     jobs[repo] = { 
-        stage(repo + "代码检出"){
-           echo "$repo 代码检出"
+        stage(repo + "checkout"){
+           echo "$repo checkout"
            sh "rm -rf  $repo; git clone $GITHUB_URL_PREFIX$repo$GITHUB_URL_SUFFIX; echo `pwd`;"
         }
-        stage(repo + "编译测试"){
+        stage(repo + "autotesting"){
                 script {
 		        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                            withEnv(["repoName=$repo"]) { // it can override any env variable
                                 echo "repoName = ${repoName}"
-                                echo "$repo 编译测试"
+                                echo "$repo autotesting"
                                 sh 'printenv'
                                 sh "cp -r /home/jenkins_home/pytest $WORKSPACE/$repo"
                                 echo "--------------------------------------------$repo test start------------------------------------------------"
@@ -81,11 +81,11 @@ def repoJobs() {
 		       }
                }
         }
-        stage(repo + "报告生成"){
+        stage(repo + "reports"){
             withEnv(["repoName=$repo"]) { // it can override any env variable
                 echo "repoName = ${repoName}"
-                echo "$repo 报告生成"
-                // 输出 Allure 报告地址
+                echo "$repo reports"
+                //
                 echo "$repo Allure Report URL: ${allureReportUrl}"
                 echo "-------------------------$repo allure report generating start---------------------------------------------------"
                 sh 'export pywork=$WORKSPACE/${repoName} && cd $pywork/pytest && cp -r ./report $WORKSPACE'
